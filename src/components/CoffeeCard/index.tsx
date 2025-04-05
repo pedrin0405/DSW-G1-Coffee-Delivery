@@ -1,4 +1,4 @@
-import { ShoppingCart } from '@phosphor-icons/react'
+import { ShoppingCart, Tag } from '@phosphor-icons/react'
 import { useTheme } from 'styled-components'
 
 import { QuantityInput } from '../Form/QuantityInput'
@@ -12,6 +12,10 @@ import {
   Tags,
   Title,
 } from './styles'
+
+import { useState } from 'react'
+
+
 
 type CoffeeCardProps = {
   coffee: {
@@ -27,8 +31,17 @@ type CoffeeCardProps = {
   decrementQuantity: (id: string) => void
 }
 
-export function CoffeeCard({ }: CoffeeCardProps) {
+export function CoffeeCard({ coffee }: CoffeeCardProps) {
   const theme = useTheme();
+  const [quantity, setQuantity] = useState(1)
+
+  function incrementQuantity() {
+    if(quantity < 5) setQuantity(quantity+1);
+  }
+
+  function decrementQuantity() {
+    if(quantity > 0) setQuantity(quantity-1);
+  }
 
   function handleAddItem() {
     console.log('Adicionar item ao carrinho')
@@ -40,26 +53,25 @@ export function CoffeeCard({ }: CoffeeCardProps) {
       <CoffeeImg src={"/images/coffees/expresso-cremoso.png"} alt="Expresso Tradicional" />
 
       <Tags>
-        {/** Aqui você pode mapear os tags do café */ }
-        <span key={'Tradicional'}>Tradicional</span>
-        <span key={'Comum'}>Comum</span>
+        {(coffee.tags).map(tag => (<span key={tag}>{tag}</span>))}
+        
       </Tags>
 
-      <Title>Expresso Tradicional</Title>
+      <Title>{coffee.title}</Title>
 
-      <Description>Café expresso tradicional com espuma cremosa</Description>
+      <Description>{coffee.description}</Description>
 
       <Control>
         <Price>
           <span>R$</span>
-          <span>{4.90.toFixed(2)}</span> {/** Aqui você pode passar o preço do café */}
+          <span>{(coffee.price).toFixed(2)}</span> {/** Aqui você pode passar o preço do café */}
         </Price>
 
         <Order $itemAdded={false}>
           <QuantityInput
-            quantity={5} // Aqui você pode passar a quantidade do café
-            incrementQuantity={() => {}} // Aqui você pode passar a função de incrementar
-            decrementQuantity={() => {}} // Aqui você pode passar a função de decrementar
+            quantity={quantity} // Aqui você pode passar a quantidade do café
+            incrementQuantity={() => {incrementQuantity()}} // Aqui você pode passar a função de incrementar
+            decrementQuantity={() => {decrementQuantity()}} // Aqui você pode passar a função de decrementar
           />
 
           <button onClick={handleAddItem}>

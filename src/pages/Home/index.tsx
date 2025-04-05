@@ -4,7 +4,9 @@ import { useTheme } from 'styled-components'
 import { CoffeeCard } from '../../components/CoffeeCard'
 
 import { CoffeeList, Heading, Hero, HeroContent, Info } from './styles'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
+import { api } from '../../serves/api'
 
 interface Coffee {
   id: string;
@@ -18,21 +20,17 @@ interface Coffee {
 
 export function Home() {
   const theme = useTheme();
+  const [coffees, setCoffees] = useState<Coffee[]>([]);
 
-  useEffect(() => {
-    // request para a API para pegar os cafés
-    // e setar no estado
-  }, []);
-
-
+ 
   
-  function incrementQuantity(id: string) {
-    // Aqui você pode fazer a lógica para incrementar a quantidade do café
-  }
+  useEffect(() =>  {async function getApi(){
 
-  function decrementQuantity(id: string) {
-    // Aqui você pode fazer a lógica para decrementar a quantidade do café
+    const response = await api.get('/coffees');
+    setCoffees(response.data);
   }
+  getApi()
+  }, []);
 
   return (
     <div>
@@ -101,18 +99,18 @@ export function Home() {
         <h2>Nossos cafés</h2>
 
         <div>
-        {[1,2,3].map((coffee) => (
-            <CoffeeCard key={coffee} coffee={{
-              description: 'Café expresso tradicional com espuma cremosa',
-              id: '1',
-              image: "/images/coffees/expresso-cremoso.png",
-              price: 9.90,
-              tags: ['Tradicional', 'Comum'],
-              title: 'Expresso Tradicional',
-              quantity: 1,
+        {coffees.map((coffee) => (
+            <CoffeeCard key={coffee.id} coffee={{
+              description: coffee.description,
+              id: coffee.id,
+              image: coffee.image,
+              price: coffee.price,
+              tags: coffee.tags,
+              title: coffee.title,
+              quantity: coffee.quantity,
             }}
-            incrementQuantity={incrementQuantity}
-            decrementQuantity={decrementQuantity}
+            incrementQuantity={() => {}}
+            decrementQuantity={() => {}}
             />
           ))}
         </div>
